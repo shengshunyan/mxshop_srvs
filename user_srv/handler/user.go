@@ -16,7 +16,9 @@ import (
 	"time"
 )
 
-type UserServer struct{}
+type UserServer struct {
+	proto.UnimplementedUserServer
+}
 
 func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
@@ -100,7 +102,7 @@ func (u UserServer) GetUserById(ctx context.Context, req *proto.IdRequest) (*pro
 }
 
 // 创建用户
-func (u UserServer) createUser(ctx context.Context, req *proto.CreateUserInfo) (*proto.UserInfoResponse, error) {
+func (u UserServer) CreateUser(ctx context.Context, req *proto.CreateUserInfo) (*proto.UserInfoResponse, error) {
 	var user model.User
 	result := global.DB.Where(&model.User{Mobile: req.Mobile}).First(&user)
 	if result.RowsAffected == 1 {
