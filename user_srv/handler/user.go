@@ -5,19 +5,19 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"github.com/anaskhan96/go-password-encoder"
+	userProto "github.com/shengshunyan/mxshop-proto/user/proto"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"gorm.io/gorm"
 	"mxshop_srvs/user_srv/global"
 	"mxshop_srvs/user_srv/model"
-	"mxshop_srvs/user_srv/proto"
 	"strings"
 	"time"
 )
 
 type UserServer struct {
-	proto.UnimplementedUserServer
+	userProto.UnimplementedUserServer
 }
 
 func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
@@ -38,10 +38,11 @@ func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
-func ModelToResponse(user *model.User) *proto.UserInfoResponse {
-	userInfoRsp := &proto.UserInfoResponse{
+func ModelToResponse(user *model.User) *userProto.UserInfoResponse {
+	userInfoRsp := &userProto.UserInfoResponse{
 		Id:       user.ID,
 		Password: user.Password,
+		Mobile:   user.Mobile,
 		Nickname: user.NickName,
 		Gender:   user.Gender,
 		Role:     int32(user.Role),
@@ -53,26 +54,25 @@ func ModelToResponse(user *model.User) *proto.UserInfoResponse {
 }
 
 // 获取用户列表
-func (u UserServer) GetUserList(ctx context.Context, req *proto.PageInfo) (*proto.UserListResponse, error) {
+func (u UserServer) GetUserList(ctx context.Context, req *userProto.PageInfo) (*userProto.UserListResponse, error) {
+	rsp := &userProto.UserListResponse{}
+
+	var count int64
+	global.DB.Model(&model.User{}).Count(&count)
+	rsp.Total = int32(count)
+
 	var users []model.User
-	result := global.DB.Find(&users)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	rsp := &proto.UserListResponse{}
-	rsp.Total = int32(result.RowsAffected)
-
 	global.DB.Scopes(Paginate(int(req.Pn), int(req.PSize))).Find(&users)
 	for _, user := range users {
 		userInfoRsp := ModelToResponse(&user)
 		rsp.Data = append(rsp.Data, userInfoRsp)
 	}
+
 	return rsp, nil
 }
 
 // 通过手机查询用户
-func (u UserServer) GetUserByMobile(ctx context.Context, req *proto.MobileRequest) (*proto.UserInfoResponse, error) {
+func (u UserServer) GetUserByMobile(ctx context.Context, req *userProto.MobileRequest) (*userProto.UserInfoResponse, error) {
 	var user model.User
 	result := global.DB.Where(&model.User{Mobile: req.Mobile}).First(&user)
 	if result.Error != nil {
@@ -87,7 +87,7 @@ func (u UserServer) GetUserByMobile(ctx context.Context, req *proto.MobileReques
 }
 
 // 通过ID查询用户
-func (u UserServer) GetUserById(ctx context.Context, req *proto.IdRequest) (*proto.UserInfoResponse, error) {
+func (u UserServer) GetUserById(ctx context.Context, req *userProto.IdRequest) (*userProto.UserInfoResponse, error) {
 	var user model.User
 	result := global.DB.First(&user, req.Id)
 	if result.Error != nil {
@@ -102,7 +102,7 @@ func (u UserServer) GetUserById(ctx context.Context, req *proto.IdRequest) (*pro
 }
 
 // 创建用户
-func (u UserServer) CreateUser(ctx context.Context, req *proto.CreateUserInfo) (*proto.UserInfoResponse, error) {
+func (u UserServer) CreateUser(ctx context.Context, req *userProto.CreateUserInfo) (*userProto.UserInfoResponse, error) {
 	var user model.User
 	result := global.DB.Where(&model.User{Mobile: req.Mobile}).First(&user)
 	if result.RowsAffected == 1 {
@@ -124,7 +124,7 @@ func (u UserServer) CreateUser(ctx context.Context, req *proto.CreateUserInfo) (
 }
 
 // 更新用户
-func (u UserServer) UpdateUser(ctx context.Context, req *proto.UpdateUserInfo) (*emptypb.Empty, error) {
+func (u UserServer) UpdateUser(ctx context.Context, req *userProto.UpdateUserInfo) (*emptypb.Empty, error) {
 	var user model.User
 	result := global.DB.First(&user, req.Id)
 	if result.RowsAffected == 0 {
@@ -143,9 +143,9 @@ func (u UserServer) UpdateUser(ctx context.Context, req *proto.UpdateUserInfo) (
 }
 
 // 校验密码
-func (u UserServer) CheckPassword(ctx context.Context, req *proto.CheckInfo) (*proto.CheckResponse, error) {
+func (u UserServer) CheckPassword(ctx context.Context, req *userProto.CheckInfo) (*userProto.CheckResponse, error) {
 	options := &password.Options{16, 100, 32, sha256.New}
 	passwordInfo := strings.Split(req.EncryptedPassword, "$")
 	check := password.Verify(req.Password, passwordInfo[2], passwordInfo[3], options)
-	return &proto.CheckResponse{Success: check}, nil
+	return &userProto.CheckResponse{Success: check}, nil
 }

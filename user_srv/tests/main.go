@@ -11,7 +11,7 @@ import (
 var client proto.UserClient
 
 func main() {
-	conn, err := grpc.NewClient("0.0.0.0:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient("127.0.0.1:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		panic("new client failed" + err.Error())
 	}
@@ -53,8 +53,8 @@ func testGetUserList() {
 func testCreateUser() {
 	user, err := client.CreateUser(context.Background(), &proto.CreateUserInfo{
 		Password: "123456",
-		Nickname: "Peng",
-		Mobile:   "136917",
+		Nickname: "dingding",
+		Mobile:   "636917",
 	})
 	if err != nil {
 		panic(err)
