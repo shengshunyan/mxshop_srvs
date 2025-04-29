@@ -10,8 +10,8 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"gorm.io/gorm"
-	"mxshop_srvs/user_srv/global"
-	"mxshop_srvs/user_srv/model"
+	"mxshop_srvs/user-srv/global"
+	"mxshop_srvs/user-srv/model"
 	"strings"
 	"time"
 )

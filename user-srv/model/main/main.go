@@ -31,7 +31,7 @@ func main() {
 	//	},
 	//)
 	//// 参考 https://github.com/go-sql-driver/mysql#dsn-data-source-name 获取详情
-	//dsn := "shane:4163054Shun.@tcp(43.139.50.150:3306)/mxshop_user_srv?charset=utf8mb4&parseTime=True&loc=Local"
+	//dsn := "root:4163054shun@tcp(localhost:3306)/mxshop_user_srv?charset=utf8mb4&parseTime=True&loc=Local"
 	//db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: newLogger})
 	//if err != nil {
 	//	panic("failed to connect database")
@@ -43,8 +43,8 @@ func main() {
 	//	panic("failed to auto migrate database")
 	//}
 
-	//value := genMd5("sheng627")
-	//fmt.Println(value)
+	value := genMd5("sheng627")
+	fmt.Println(value)
 
 	// 加密
 	options := &password.Options{16, 100, 32, sha256.New}

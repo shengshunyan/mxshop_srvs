@@ -3,12 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	userProto "github.com/shengshunyan/mxshop-proto/user/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"mxshop_srvs/user_srv/proto"
 )
 
-var client proto.UserClient
+var client userProto.UserClient
 
 func main() {
 	conn, err := grpc.NewClient("127.0.0.1:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -22,13 +22,13 @@ func main() {
 		}
 	}(conn)
 
-	client = proto.NewUserClient(conn)
-	//testCreateUser()
-	testGetUserList()
+	client = userProto.NewUserClient(conn)
+	testCreateUser()
+	//testGetUserList()
 }
 
 func testGetUserList() {
-	rsp, err := client.GetUserList(context.Background(), &proto.PageInfo{
+	rsp, err := client.GetUserList(context.Background(), &userProto.PageInfo{
 		Pn:    1,
 		PSize: 10,
 	})
@@ -39,7 +39,7 @@ func testGetUserList() {
 	fmt.Println(rsp.Total)
 	for _, user := range rsp.Data {
 		fmt.Println(user)
-		check, err2 := client.CheckPassword(context.Background(), &proto.CheckInfo{
+		check, err2 := client.CheckPassword(context.Background(), &userProto.CheckInfo{
 			Password:          "123456",
 			EncryptedPassword: user.Password,
 		})
@@ -51,10 +51,10 @@ func testGetUserList() {
 }
 
 func testCreateUser() {
-	user, err := client.CreateUser(context.Background(), &proto.CreateUserInfo{
+	user, err := client.CreateUser(context.Background(), &userProto.CreateUserInfo{
 		Password: "123456",
-		Nickname: "dingding",
-		Mobile:   "636917",
+		Nickname: "xiaoming",
+		Mobile:   "15754600156",
 	})
 	if err != nil {
 		panic(err)
