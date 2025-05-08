@@ -2,7 +2,7 @@ package initialize
 
 import (
 	"mxshop_srvs/common/initialize"
-	"mxshop_srvs/user-srv/global"
+	"mxshop_srvs/goods-srv/global"
 )
 
 func InitDB() {

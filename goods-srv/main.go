@@ -2,15 +2,15 @@ package main
 
 import (
 	"fmt"
-	userProto "github.com/shengshunyan/mxshop-proto/user/proto"
+	goodsProto "github.com/shengshunyan/mxshop-proto/goods/proto"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
 	cInitialize "mxshop_srvs/common/initialize"
-	"mxshop_srvs/user-srv/global"
-	"mxshop_srvs/user-srv/handler"
-	"mxshop_srvs/user-srv/initialize"
+	"mxshop_srvs/goods-srv/global"
+	"mxshop_srvs/goods-srv/handler"
+	"mxshop_srvs/goods-srv/initialize"
 	"net"
 	"os"
 	"os/signal"
@@ -30,8 +30,8 @@ func main() {
 	defer initialize.CloseDB()
 
 	server := grpc.NewServer()
-	// 注册用户服务
-	userProto.RegisterUserServer(server, &handler.UserServer{})
+	// 注册服务
+	goodsProto.RegisterGoodsServer(server, &handler.GoodsServer{})
 	// 注册健康检查
 	grpc_health_v1.RegisterHealthServer(server, health.NewServer())
 
