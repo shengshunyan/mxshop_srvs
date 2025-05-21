@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"gorm.io/gorm"
+	"mxshop_srvs/common/utils"
 	"mxshop_srvs/user-srv/global"
 	"mxshop_srvs/user-srv/model"
 	"strings"
@@ -18,24 +18,6 @@ import (
 
 type UserServer struct {
 	userProto.UnimplementedUserServer
-}
-
-func Paginate(page, pageSize int) func(db *gorm.DB) *gorm.DB {
-	return func(db *gorm.DB) *gorm.DB {
-		if page <= 0 {
-			page = 1
-		}
-
-		switch {
-		case pageSize > 100:
-			pageSize = 100
-		case pageSize <= 0:
-			pageSize = 10
-		}
-
-		offset := (page - 1) * pageSize
-		return db.Offset(offset).Limit(pageSize)
-	}
 }
 
 func ModelToResponse(user *model.User) *userProto.UserInfoResponse {
@@ -62,7 +44,7 @@ func (u UserServer) GetUserList(ctx context.Context, req *userProto.PageInfo) (*
 	rsp.Total = int32(count)
 
 	var users []model.User
-	global.DB.Scopes(Paginate(int(req.Pn), int(req.PSize))).Find(&users)
+	global.DB.Scopes(utils.Paginate(int(req.Pn), int(req.PSize))).Find(&users)
 	for _, user := range users {
 		userInfoRsp := ModelToResponse(&user)
 		rsp.Data = append(rsp.Data, userInfoRsp)

@@ -92,8 +92,11 @@ func parseNacosConfig(content string, container *config.ServerConfig) {
 	}
 
 	// 设置动态端口
-	port, err := utils.GetFreePort()
-	if err == nil {
-		container.Port = port
+	env := utils.GetEnv()
+	if env != "dev" {
+		port, err := utils.GetFreePort()
+		if err == nil {
+			container.Port = port
+		}
 	}
 }
