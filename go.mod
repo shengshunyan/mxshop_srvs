@@ -7,7 +7,7 @@ require (
 	github.com/hashicorp/consul/api v1.32.0
 	github.com/nacos-group/nacos-sdk-go/v2 v2.999.17
 	github.com/satori/go.uuid v1.2.0
-	github.com/shengshunyan/mxshop-proto v0.0.0-20250507143132-c721c1915873
+	github.com/shengshunyan/mxshop-proto v0.0.0-20250625145201-94ac68266748
 	github.com/spf13/viper v1.20.1
 	go.uber.org/zap v1.27.0
 	google.golang.org/grpc v1.67.3

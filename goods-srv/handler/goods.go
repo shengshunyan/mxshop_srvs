@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
+	commonModel "mxshop_srvs/common/model"
 	"mxshop_srvs/common/utils"
 	"mxshop_srvs/common/utils/slice"
 	"mxshop_srvs/goods-srv/global"
@@ -165,7 +166,7 @@ func (s *GoodsServer) CreateGoods(ctx context.Context, req *proto.CreateGoodsInf
 }
 
 func (s *GoodsServer) DeleteGoods(ctx context.Context, req *proto.DeleteGoodsInfo) (*emptypb.Empty, error) {
-	if result := global.DB.Delete(&model.Goods{BaseModel: model.BaseModel{ID: req.Id}}, req.Id); result.Error != nil {
+	if result := global.DB.Delete(&model.Goods{BaseModel: commonModel.BaseModel{ID: req.Id}}, req.Id); result.Error != nil {
 		return nil, status.Errorf(codes.NotFound, "商品不存在")
 	}
 	return &emptypb.Empty{}, nil

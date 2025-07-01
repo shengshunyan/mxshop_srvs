@@ -1,7 +1,9 @@
 package model
 
+import "mxshop_srvs/common/model"
+
 type Category struct {
-	BaseModel
+	model.BaseModel
 	Name             string `gorm:"type:varchar(20);not null" json:"name"`
 	Level            int32  `gorm:"type:int;not null;default:1" json:"level"`
 	IsTab            bool   `gorm:"type:boolean;not null;default:false" json:"is_tab"`
@@ -15,13 +17,13 @@ func (Category) TableName() string {
 }
 
 type Brands struct {
-	BaseModel
+	model.BaseModel
 	Name string `gorm:"type:varchar(20);not null"`
 	Logo string `gorm:"type:varchar(200);not null;default:''"`
 }
 
 type GoodsCategoryBrand struct {
-	BaseModel
+	model.BaseModel
 	CategoryID int32 `gorm:"type:int;index:idx_category_brand;unique;not null"`
 	Category   Category
 	BrandsID   int32 `gorm:"type:int;index:idx_category_brand;unique;not null"`
@@ -33,14 +35,14 @@ func (GoodsCategoryBrand) TableName() string {
 }
 
 type Banner struct {
-	BaseModel
+	model.BaseModel
 	Image string `gorm:"type:varchar(200);not null;"`
 	Url   string `gorm:"type:varchar(200);not null;"`
 	Index int32  `gorm:"type:int;not null;default:1"`
 }
 
 type Goods struct {
-	BaseModel
+	model.BaseModel
 
 	CategoryID int32 `gorm:"type:int;not null"`
 	Category   Category
