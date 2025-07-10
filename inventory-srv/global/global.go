@@ -2,7 +2,7 @@ package global
 
 import (
 	"gorm.io/gorm"
-	"mxshop_srvs/common/config"
+	"mxshop_srvs/inventory-srv/config"
 )
 
 var (

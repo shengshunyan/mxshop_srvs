@@ -16,4 +16,11 @@ func InitConfig() {
 	}
 
 	initialize.BindConfig(configFilePath, global.ServerConfig)
+	// 设置动态端口
+	if env != "dev" {
+		port, err := utils.GetFreePort()
+		if err == nil {
+			global.ServerConfig.Port = port
+		}
+	}
 }

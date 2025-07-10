@@ -9,10 +9,9 @@ import (
 	"go.uber.org/zap"
 	"log"
 	"mxshop_srvs/common/config"
-	"mxshop_srvs/common/utils"
 )
 
-func BindConfig(path string, serverConfig *config.ServerConfig) {
+func BindConfig[T any](path string, serverConfig T) {
 	// 本地读取nacos信息
 	v := viper.New()
 	v.SetConfigFile(path)
@@ -79,7 +78,7 @@ func BindConfig(path string, serverConfig *config.ServerConfig) {
 }
 
 // 使用 Viper 解析 YAML 内容
-func parseNacosConfig(content string, container *config.ServerConfig) {
+func parseNacosConfig[T any](content string, container T) {
 	yamlViper := viper.New()
 	yamlViper.SetConfigType("yaml")
 	err := yamlViper.ReadConfig(bytes.NewBuffer([]byte(content)))
@@ -89,14 +88,5 @@ func parseNacosConfig(content string, container *config.ServerConfig) {
 	err = yamlViper.Unmarshal(&container)
 	if err != nil {
 		log.Fatalf("Failed to unmarshal config: %v", err)
-	}
-
-	// 设置动态端口
-	env := utils.GetEnv()
-	if env != "dev" {
-		port, err := utils.GetFreePort()
-		if err == nil {
-			container.Port = port
-		}
 	}
 }
